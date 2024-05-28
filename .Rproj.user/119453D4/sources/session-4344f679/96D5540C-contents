@@ -1,0 +1,31 @@
+# MCA - Analisis de componentes multiples
+rm(list = ls())
+library(ClustOfVar)
+library(FactoMineR)
+library(ggplot2)
+
+data("dogs")
+
+# Exploración de los datos
+
+ggplot(dogs, aes(x = Affectivity, fill = Aggressivness)) +
+  geom_bar(position = "dodge")
+
+ggplot(dogs, aes(x = Function, fill = Aggressivness)) +
+  geom_bar(position = "dodge")
+
+ggplot(dogs, aes(x = Intelligence, fill = Aggressivness)) +
+  geom_bar(position = "dodge")
+
+ggplot(dogs, aes(x = Intelligence, fill = Weight)) +
+  geom_bar(position = "dodge")
+
+acm_dogs <- MCA(dogs)
+acm_dogs$eig
+acm_dogs$var$contrib
+
+plot(acm_dogs)
+
+dist_dogs <- dist(acm_dogs$var$coord)
+arbol_perros <- hclust(dist_dogs)
+plot(arbol_perros)

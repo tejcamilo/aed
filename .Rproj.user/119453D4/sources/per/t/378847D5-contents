@@ -1,0 +1,34 @@
+data_houses <- data_houses %>% 
+  mutate(year_since_built = 2024 - YearBuilt, 
+         year_since_remod = 2024 - YearRemodAdd)
+
+reg_houses <- data_houses %>% select(SalePrice,
+                       LotArea,
+                       year_since_built,
+                       year_since_remod,
+                       CentralAir,
+                       OverallQual)
+
+filtr <- reg_houses %>% filter(LotArea < 100000)
+
+reg_houses1 <- reg_houses %>% mutate(CentralAir = NULL)
+
+sx <- cov(reg_houses1)
+mean_reg <- apply(reg_houses1, 2, mean)
+distancias <- mahalanobis(reg_houses1, center = mean_reg, cov = sx)
+
+plot(distancias)
+box_houses_dist <- boxplot(distancias)
+median_out_dist <- box_houses_dist$out %>%  median() # out=outliers
+min_atipicos <- box_houses_dist$out %>% min()
+
+# remover los datos atípicos
+
+atipicos_position <-which(distancias > median_out_dist)
+atipicos_position_min <-which(distancias > min_atipicos)
+
+reg_houses2 <- reg_houses[-atipicos_position, ]
+reg_houses3 <- reg_houses[-atipicos_position_min, ]
+
+plot(reg_houses2$SalePrice, reg_houses2$LotArea)
+plot(reg_houses3$SalePrice, reg_houses3$LotArea)

@@ -1,0 +1,72 @@
+# Librerías necesarias ----------------------------------------------------
+
+library(dplyr)
+library(tidyr)
+library(readr)
+library(ggplot2)
+library(plotly)
+
+setwd("/Users/ctejada/Desktop/AED/feb15/src/")
+
+# Lectura de los datos ----------------------------------------------------
+
+population_data <- read_csv('../input/population.csv', skip = 1)
+region_codes <- read_delim('../input/UNcodes.csv', delim = ';')
+
+# Funciones ---------------------------------------------------------------
+
+na_remove <- function(x) {
+  return(mean(x, na.rm = TRUE)) #na.rem quitamos los na
+}
+
+# Preprocesamiento --------------------------------------------------------
+
+# Cambiando los nombres de las columnas
+
+population <- population_data %>%
+  rename("Country" = "...2", "rca_code" = "Region/Country/Area")
+
+# Cruzar los datos de los codigos de las regiones con los datos de poblacion
+
+pop_rca <- population %>%
+  spread("Series", "Value") %>% 
+  filter(rca_code %in% as.numeric(region_codes$`M49 Code`))
+
+pop_clean <- pop_rca %>% select(!c(Footnotes, Source ))
+
+pop_country <- pop_clean %>%  
+  group_by(rca_code, Country, Year) %>% 
+  mutate(across(everything(), na_remove)) %>% # help f1
+  distinct()
+
+# Procesamiento -----------------------------------------------------------
+
+# Estadística descriptiva
+
+# Gráfico borrador
+pop_country$`Population density` %>% summary()
+pop_country$`Population density` %>% sd()
+pop_country$`Population density` %>% hist(breaks = 200, # ponemos mas breaks si "y" es muy largo
+                                          xlim = c(0,1000),
+                                          xlab = 'Densidad poblacional, Hab/km2',
+                                          ylab = 'Número de países',
+                                          main = 'Distribución de la densidad poblacional por países',
+                                          col = 'lightblue') 
+
+# Gráfico usuario final
+
+grafico <- ggplot(pop_country, aes(x = `Population density`)) + # + para añadir capas
+  geom_histogram(fill = 'darkgrey', color = 'white') + 
+  labs(x = 'Densidad poblacional, Hab/km2',
+       y = 'Cantidad de países',
+       title = 'Distribución de la densidad poblacional por países',
+       caption = 'Países con menos de 1000 habitantes') + 
+  scale_x_continuous(limits = c(0,1000)) + 
+  theme_minimal() + # tema mínimo, resetea el por defecto
+  theme(panel.background = element_rect(color = 'grey', fill = 'black'), # element_ seleccionamos el elemento que queremos cambiar
+        plot.title = element_text(hjust = 0.5, size = 18),
+        axis.title.x = element_text(size = 14, color = 'grey'),
+        axis.title.y = element_text(size = 14, color = 'grey'),
+        panel.grid=element_line(color = 'lightgrey')) 
+
+ggplotly(grafico)

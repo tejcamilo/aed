@@ -1,0 +1,8 @@
+library(dplyr)
+library(tidyr)
+library(readr)
+library(ggplot2)
+
+setwd("/Users/ctejada/Desktop/AED/proyecto/src/")
+
+verdes <- read_csv("../input/verdes.csv")

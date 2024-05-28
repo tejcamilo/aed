@@ -1,0 +1,50 @@
+# Librerías necesarias ----------------------------------------------------
+
+library(dplyr)
+library(tidyr)
+library(readr)
+
+setwd("/Users/ctejada/Desktop/AED/feb13/src/")
+
+# Lectura de los datos ----------------------------------------------------
+
+population_data <- read_csv('../input/population.csv', skip = 1)
+region_codes <- read_delim('../input/UNcodes.csv', delim = ';')
+
+# Funciones ---------------------------------------------------------------
+
+na_remove <- function(x) {
+  return(mean(x, na.rm = TRUE)) #na.rem quitamos los na
+}
+
+# Preprocesamiento --------------------------------------------------------
+
+# Cambiando los nombres de las columnas
+
+population <- population_data %>%
+  rename("Country" = "...2", "rca_code" = "Region/Country/Area")
+
+# Cruzar los datos de los codigos de las regiones con los datos de poblacion
+
+pop_rca <- population %>%
+  spread("Series", "Value") %>% 
+  filter(rca_code %in% as.numeric(region_codes$`M49 Code`))
+
+pop_clean <- pop_rca %>% select(!c(Footnotes, Source ))
+
+pop_country <- pop_clean %>%  
+  group_by(rca_code, Country, Year) %>% 
+  mutate(across(everything(), na_remove)) %>% # help f1
+  distinct()
+
+# Procesamiento -----------------------------------------------------------
+
+pop_country %>% 
+  ungroup() %>% 
+  select(Year, `Population density`) %>% 
+  group_by(Year) %>% 
+  summarise(media_densisad = mean(`Population density`), 
+            dev_est_densidad = sd(`Population density`)) %>% 
+  View()
+
+

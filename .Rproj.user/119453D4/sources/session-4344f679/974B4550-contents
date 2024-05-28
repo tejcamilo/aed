@@ -1,0 +1,44 @@
+library(MASS)
+
+# generamos datos aleatorios provenientes de una distribución normal multivariada con 3 variables
+
+medias <- c(10, 15, 12)
+varianzas_covarianzas <- matrix(c(10, 8, 7,
+                                  8, 11, 9,
+                                  7, 9, 13), byrow = TRUE, ncol = 3)
+n <- 100
+
+datos_simulados <- mvrnorm(n, medias, varianzas_covarianzas) %>% 
+  data.frame() # mandamos a un data frame para que sea mas facil trabajarlo
+
+# Gráfico 1
+ggplot(datos_simulados, aes(x = X1, y = X2)) +
+  geom_point(color = "blue", size = 3) +
+  labs(title = "Gráfico X1 vs X2",
+       x = "X1", y = "X2") +
+  theme_minimal()
+
+# Gráfico 2
+ggplot(datos_simulados, aes(x = X2, y = X3)) +
+  geom_point(color = "green", size = 3) +
+  labs(title = "Gráfico X2 vs X3",
+       x = "X2", y = "X3") +
+  theme_minimal()
+
+# Gráfico 3
+ggplot(datos_simulados, aes(x = X3, y = X1)) +
+  geom_point(color = "red", size = 3) +
+  labs(title = "Gráfico X3 vs X1",
+       x = "X3", y = "X1") +
+  theme_minimal()
+
+# para acercar los datos, modificamos el valor de las medias
+
+# Gráfico grupos
+datos_kmeans %>%  ggplot(aes(X1,X2,  color = grupo)) +
+  geom_point()
+
+# kmeans
+agrupacion <- kmeans(datos_kmeans[, -4], 2) #parametros(datos, # de grupos), quitamos la columna 4 pq kmeans solo toma datos numericos
+
+

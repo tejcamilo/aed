@@ -1,0 +1,31 @@
+library(mnorm)
+library(dplyr)
+library(lmtest)
+
+# simulaciones respecto a los valores de los estimadores de beta
+
+mu <- c(5,6) # media de las variables X1 y X2
+sigma <-matrix(c(4, 3.4, 3.4, 4.3), nrow = 2, byrow = TRUE) # matriz de varianzas y covarianzas, entre más cerana la covarianza 
+
+datos <- rmnorm(100, mu, sigma) %>% data.frame()
+
+plot(datos$X1, datos$X2, pch = 20, col = 'lightblue')
+
+beta0 <- c()
+beta1 <- c()
+
+for (i in 1:200) {
+  datos <- rmnorm(100, mu, sigma) %>% data.frame()
+  model <- lm(X1~X2, data = datos)
+  beta0 <- append(beta0, model$coefficients[1])
+  beta1 <- append(beta1, model$coefficients[2])
+}
+
+plot(beta0, beta1, pch=20, col = 'purple')
+plot(density(beta0))
+plot(density(beta1))
+
+summary(model)
+
+resettest(model)
+mean(model$residuals)

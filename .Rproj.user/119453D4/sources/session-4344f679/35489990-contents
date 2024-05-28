@@ -1,0 +1,64 @@
+# Abril 23
+# PCA - Analisis de componentes principales
+# librerias necesarias
+
+library('FactoClass')
+library('FactoMineR')
+library('ade4')
+library('dplyr')
+library('ggplot2')
+library('aplpack')
+
+data("cafe")
+faces(cafe, fill = FALSE) #0:34
+
+# Ajustando las proyecciones ortogonales a través de un ACP
+
+cor(cafe)
+pca <- PCA(cafe, ncp = 3)
+
+
+# valores propios
+
+pca$eig
+plot(pca$eig[,1], pch = 20, type = 'b') # que tanta varianza aporta cada componente
+
+# Variables
+
+pca$var$cor
+pca$var$contrib # nos dice que tanto aporta cada variable a cada dimensión (Dim.1, Dim.2, Dim.3, ...)
+plot(pca)
+
+# Ej: sumar los valores de las contribuciones en cada componente 
+
+cont <- pca$var$contrib
+apply(cont, 2, sum)
+
+# Individuos
+
+pca$ind$contrib # cafés, cuales aportan más a cada dimensión
+
+# Agrupamiento
+
+pca$ind$coord # valores de las proyecciones ortogonales
+distancias <- dist(pca$ind$coord) # calculamos las distancias
+arbol <- hclust(distancias)
+plot(arbol)
+grupos <- cutree(arbol, 3)
+
+indices <- pca$ind$coord %>% data.frame()
+indices[, 'grupo'] <- factor(grupos)
+
+ggplot(data = indices, aes(x = Dim.1, y= Dim.2, color = grupo)) +
+  geom_point()
+
+grupos2 <- kmeans(indices, 3)
+indices[, 'grupos2'] <- factor(grupos2$cluster)
+
+ggplot(data = indices, aes(x = Dim.1, y= Dim.2, color = grupos2)) +
+  geom_point()
+
+
+
+
+

@@ -1,0 +1,45 @@
+library(dplyr)
+library(ggplot2)
+library(MASS)
+experimento <- data_frame(temp = c(20, 22, 25, 33, 44, 47, 59, 70),
+                         pres = c(111, 111, 106, 112, 117, 122, 123, 128))
+
+# grafico pres vs. temp
+ggplot(experimento, aes(x = temp, y = pres)) +
+  geom_point(color = "purple") +
+  labs(x = "temperatura", y = "presion", title = "Gráfico temp vs. presion") +
+  theme_minimal()
+
+# calcular correlacion  
+
+cor(experimento$temp, experimento$pres, method = c("pearson", "kendall", "spearman"))
+
+lm(experimento$temp ~ experimento$pres, experimento)
+
+
+covarianzas <- matrix(c(1, 0.8, 0.8, 3), nrow = 2, byrow = TRUE)
+datos <- mvrnorm(n = 100, mu = c(2,7), Sigma = covarianzas) %>% data_frame()
+names(datos) <- c('x1','x2')
+plot(datos$X1, datos$X2)
+reg1 <- lm(x1~x2, data = datos)
+
+
+# Propiedades de beta_0 y beta_1
+
+
+
+covarianzas <- matrix(c(1, 1.2, 1.2, 3), nrow = 2, byrow = TRUE)
+
+
+
+interceptos <- c()
+pendientes <- c()
+
+for(i in 1:200){
+  
+  datos <- mvrnorm(n = 100, mu = c(2, 7), Sigma = covarianzas) %>% data.frame()
+  reg1 <- lm(X1~X2, data = datos)
+  interceptos <- append(interceptos, reg1$coefficients[1])
+  pendientes <- append(pendientes, reg1$coefficients[2])
+}
+

@@ -1,0 +1,68 @@
+library(dplyr)
+library(tidyr)
+library(readr)
+setwd("/Users/ctejada/Desktop/AED/proyecto/src/")
+cancer_data <- read_csv("../input/cancer.csv")
+View(cancer_data)
+View(cancer_data)
+class(cancer_data)
+summary(cancer_data)
+cancer_data %>% spread('Jurisdiction', 'Total') %>% summary()
+chisq <- chisq.test(cancer_data)
+View(cancer_data)
+my_data_clean <- na.omit(cancer_data)
+View(my_data_clean)
+my_data_clean <- cancer_data[, 1:4]
+chisq <- chisq.test(my_data_clean)
+chisq <- chisq.test(factor(my_data_clean))
+chisq <- chisq.test(my_data_clean)
+my_data_clean <- cancer_data[2, 1:4]
+my_data_clean <- cancer_data[2:, 1:4]
+my_data_clean <- cancer_data[2:25, 1:4]
+my_data_clean <- cancer_data[3:25, 1:4]
+my_data_clean
+ggplot(cancer_data, aes(x = cancer_data$Males, y = cancer_data$Females)) +
+geom_point(color = "purple") +
+labs(x = "temperatura", y = "presion", title = "Gráfico temp vs. presion") +
+theme_minimal()
+library(ggplot2)
+ggplot(cancer_data, aes(x = cancer_data$Males, y = cancer_data$Females)) +
+geom_point(color = "purple") +
+labs(x = "temperatura", y = "presion", title = "Gráfico temp vs. presion") +
+theme_minimal()
+barplot(cancer_data[, 1:2] )
+cancer_data[, 1:2]
+c <- c(cancer_data[, 1:2])
+View(c)
+barplot(c )
+c <- c(cancer_data[, 1:1])
+barplot(c )
+c <- c(cancer_data[, 2:2])
+barplot(c )
+View(c)
+data <- read_csv("../input/cancer.csv")
+str(data)
+class(data)
+View(data)
+summary(data)
+table(data$Males, data$Females)
+table(data$Total)
+hist(data$Total)
+data_clean <- data[, 1:4]
+View(data_clean)
+ggplot(data, aes(x = Male, y = Female)) +
+geom_histogram(binwidth = 2, fill = "blue", color = "red", alpha = 0.8) +
+labs(title = "Age Distribution", x = "Age", y = "Frequency")
+ggplot(data, aes(x = Males, y = Females)) +
+geom_histogram(binwidth = 2, fill = "blue", color = "red", alpha = 0.8) +
+labs(title = "Age Distribution", x = "Age", y = "Frequency")
+sum(data$Males)
+total_females <- sum(data$Females)
+total_males <- sum(data$Males)
+class(data$Jurisdiction)
+class(c(data$Jurisdiction))
+table(data)
+table(data_clean)
+str(data)
+class(data)
+ggplot(data_clean, aes(Total))

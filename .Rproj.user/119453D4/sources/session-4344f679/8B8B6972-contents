@@ -1,0 +1,23 @@
+library(dplyr)
+library(tidyr)
+library(readr)
+library(ggplot2)
+library(plotly)
+
+setwd("/Users/ctejada/Desktop/AED/apr25/src/")
+
+population_raw <- read_csv('../input/population_total.csv', skip = 3)
+electricity_raw <- read.csv('../input/electricity.csv', skip = 3)
+forest_area_raw <- read.csv('../input/forest_area.csv', skip = 3)
+
+
+n_years <- function(df, n) {
+  df <- df[, colSums(is.na(df)) < nrow(df)] # remover columnas de solo NA
+  df <- df[, c(1, (ncol(df)-(n-1)):ncol(df))]
+  return(df)
+}
+
+population <- n_years(population_raw, 5)
+electricity <- n_years(electricity_raw, 5) # % de cobertura de electricidad
+forest_area <- n_years(forest_area_raw, 5) # km2 de bosques
+
